@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Asteroids</title>
+    <style></style>
+</head>
+
+<body>
+<script src="Ship.js"> </script> 
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+<script>
+    const FPS = 75;
+    const FRICTION = 0.7; // friction coefficient in space
+    const SHIP_SIZE = 30;
+    const TURN_SPEED = 360; // Turn speed in degrees per second
+    const SHIP_MOMENTUM = 5; // acceletarion of the ship in pixels per second
+    
+    /** @type {HTMLCanvasElement} */
+    var canv = document.getElementById("gameCanvas");
+    var context = canv.getContext("2d");
+
+    
+    ship = new Ship(canv.width / 2, canv.height / 2, SHIP_SIZE);
+
+    // set up event handlers
+    document.addEventListener("keydown", keyDown);
+    document.addEventListener("keyup", keyUp);
+
+    function keyDown(/** @type {KeyboadEvent} */ ev) {
+        switch(ev.keyCode) {
+            case 37: // Left arrow
+                ship.rotation = TURN_SPEED / 180 * Math.PI / FPS;
+                break;
+            case 38: // Up arrow
+                ship.boosting = true;
+                break;
+            case 39: // Right arrow
+                ship.rotation = -TURN_SPEED / 180 * Math.PI / FPS;
+                break;
+        }
+    }
+
+    function keyUp(/** @type {KeyboadEvent} */ ev) {
+        switch(ev.keyCode) {
+            case 37: // Left arrow
+                ship.rotation = 0;
+                break;
+            case 38: // Up arrow
+                ship.boosting = false;
+                break;
+            case 39: // Right arrow
+                ship.rotation = 0;
+                break;
+        }
+    }
+
+    // set up game loop
+    setInterval(update, 1000 / FPS);
+    
+    function update(){
+        // draw space
+        context.fillStyle = "black";
+        context.fillRect(0,0,canv.width, canv.height);
+
+        
+        // boost the ship
+        ship.boostShip();
+        // draw ship
+        ship.drawShip();
+
+        // rotate ship
+        ship.angle += ship.rotation;
+
+        // move ship
+        ship.x += ship.momentum.x;
+        ship.y += ship.momentum.y;
+
+        // handle edge of screen
+        ship.reappearWhenOutOfCanvas();
+
+        // centre dot 
+        context.fillStyle = "red";
+        context.fillRect(ship.x - 1, ship.y - 1, 2, 2);
+
+        
+    }
+</script>
+</body>
+
+</html>
