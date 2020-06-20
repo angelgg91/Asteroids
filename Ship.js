@@ -2,7 +2,7 @@ class Ship {
         constructor(coordX, coordY, size) {
             this.x = coordX;
             this.y = coordY;
-            this.radius = SHIP_SIZE / 2;
+            this.radius = size / 2;
             this.angle = 90 / 180 * Math.PI;  // convert to radians
             this.rotation = 0;
             this.boosting = false;
@@ -11,6 +11,7 @@ class Ship {
                 y: 0
             };
         }
+
 
         drawBooster() {
         context.fillStyle = "red"
@@ -34,6 +35,7 @@ class Ship {
         context.stroke();
         }
 
+
         boostShip() {
             if (this.boosting) {
                 this.momentum.x += SHIP_MOMENTUM * Math.cos(this.angle) / FPS;
@@ -45,6 +47,7 @@ class Ship {
                 this.momentum.y -= FRICTION * this.momentum.y / FPS;
             }
         }
+
 
         reappearWhenOutOfCanvas() {
             if (this.x < 0 - this.radius) {
@@ -58,6 +61,7 @@ class Ship {
                 this.y = 0 - this.radius;
             }
         }
+
 
         drawShip() {
             context.strokeStyle = "white";
@@ -79,4 +83,14 @@ class Ship {
             context.stroke();
         }
 
+
+        rotateShip() {
+            this.angle += this.rotation;
+        }
+
+
+        moveShip() {
+            this.x += this.momentum.x;
+            this.y += this.momentum.y;
+        }
     }

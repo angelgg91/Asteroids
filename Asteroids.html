@@ -8,15 +8,21 @@
 </head>
 
 <body>
-<script src="Ship.js"> </script> 
 <canvas id="gameCanvas" width="800" height="600"></canvas>
+<script src="Ship.js"> </script> 
+<script src="Asteroid.js"> </script> 
 <script>
     const FPS = 75;
     const FRICTION = 0.7; // friction coefficient in space
     const SHIP_SIZE = 30;
     const TURN_SPEED = 360; // Turn speed in degrees per second
     const SHIP_MOMENTUM = 5; // acceletarion of the ship in pixels per second
-    
+    const ASTEROID_SIZE = 100;
+    const ASTEROIDS_NUMBER = 30;
+    const ASTEROIDS_JAG = 0.5; // jaggedness of the asteroid
+    const ASTEROID_SPEED = 50; // max speed for asteroids
+    const ASTEROID_VERTICES = 10; // max number of vertices for an asteroid
+
     /** @type {HTMLCanvasElement} */
     var canv = document.getElementById("gameCanvas");
     var context = canv.getContext("2d");
@@ -56,6 +62,26 @@
         }
     }
 
+
+    var Asteroids = [];
+    createAsteroidBelt();
+    function createAsteroidBelt() {
+        Asteroids = []
+        var x, y;
+        for (var i = 0; i < ASTEROIDS_NUMBER; i++) {
+            do {
+                x = Math.floor(Math.random() * canv.width);
+                y = Math.floor(Math.random() * canv.height);
+            } while (distanceBetweenPoints(ship.x, ship.y, x, y) < ASTEROID_SIZE * 2 + ship.radius);
+
+            Asteroids.push(new Asteroid(x, y, ASTEROID_SIZE, ASTEROID_SPEED, ASTEROID_VERTICES, ASTEROIDS_JAG))
+        }
+    }
+
+    function distanceBetweenPoints(x1, y1, x2, y2) {
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    }
+
     // set up game loop
     setInterval(update, 1000 / FPS);
     
@@ -64,27 +90,24 @@
         context.fillStyle = "black";
         context.fillRect(0,0,canv.width, canv.height);
 
-        
-        // boost the ship
-        ship.boostShip();
-        // draw ship
+        // ship
         ship.drawShip();
-
-        // rotate ship
-        ship.angle += ship.rotation;
-
-        // move ship
-        ship.x += ship.momentum.x;
-        ship.y += ship.momentum.y;
-
-        // handle edge of screen
+        ship.boostShip();
+        ship.rotateShip();
+        ship.moveShip();
         ship.reappearWhenOutOfCanvas();
 
+        // asteroids
+        for (var i = 0; i < Asteroids.length; i++){
+            Asteroids[i].drawAsteroid();
+            Asteroids[i].moveAsteroid();
+            Asteroids[i].reappearWhenOutOfCanvas();
+        }
+ 
         // centre dot 
         context.fillStyle = "red";
         context.fillRect(ship.x - 1, ship.y - 1, 2, 2);
 
-        
     }
 </script>
 </body>
