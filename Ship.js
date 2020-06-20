@@ -65,7 +65,7 @@ class Ship {
 
         drawShip() {
             context.strokeStyle = "white";
-            context.lineWidth = SHIP_SIZE / 20;
+            context.lineWidth = this.radius / 10;
             context.beginPath();
             context.moveTo( // head of the ship
                 this.x + 4 / 3 * this.radius * Math.cos(this.angle),

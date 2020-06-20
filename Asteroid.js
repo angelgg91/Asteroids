@@ -17,7 +17,7 @@ class Asteroid {
 
     drawAsteroid() {
         context.strokeStyle = "grey";
-        context.lineWidth = ASTEROID_SIZE / 30;
+        context.lineWidth = this.radius / 30;
         // draw path
         context.beginPath();
         context.moveTo(
