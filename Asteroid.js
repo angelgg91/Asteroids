@@ -1,5 +1,5 @@
 class Asteroid {
-    constructor(coordX, coordY, size, speed, nvertices, jag) {
+    constructor(coordX, coordY, size, speed, nvertices, jag, FPS) {
         this.x = coordX;
         this.y = coordY;
         this.xVelocity = Math.random() * speed / FPS * (Math.random() < 0.5 ? 1 : -1);
@@ -15,7 +15,7 @@ class Asteroid {
     }
 
 
-    drawAsteroid() {
+    drawAsteroid(context) {
         context.strokeStyle = "grey";
         context.lineWidth = this.radius / 30;
         // draw path
@@ -43,7 +43,7 @@ class Asteroid {
     }
 
 
-    reappearWhenOutOfCanvas() {
+    reappearWhenOutOfCanvas(canv) {
         if (this.x < 0 - this.radius) {
             this.x = canv.width + this.radius;
         } else if (this.x > canv.width + this.radius) {

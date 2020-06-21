@@ -1,25 +1,27 @@
 class Ship {
-    constructor(coordX, coordY, size) {
+    constructor(coordX, coordY, size, acceleration, invis_duration, blink_duration, FPS, friction) {
         this.x = coordX;
         this.y = coordY;
         this.radius = size / 2;
         this.angle = 90 / 180 * Math.PI;  // convert to radians
-        this.blinkNum = Math.ceil(SHIP_INV_DUR / SHIP_BLINK_DUR);
-        this.blinkTime = Math.ceil(SHIP_BLINK_DUR * FPS);
-        this.explodeTime = 0;
         this.rotation = 0;
         this.boosting = false;
         this.momentum = {
             x: 0,
             y: 0
         };
+        this.acceleration = acceleration;
+        this.blinkNum = Math.ceil(invis_duration / blink_duration);
+        this.blinkTime = Math.ceil(blink_duration * FPS);
+        this.explodeTime = 0;
+        this.spaceFriction = friction;
     }
 
 
     drawBooster() {
         context.fillStyle = "red"
         context.strokeStyle = "yellow";
-        context.lineWidth = SHIP_SIZE / 10;
+        context.lineWidth = this.radius / 5;
         context.beginPath();
         context.moveTo( // rear left
             this.x - this.radius * (2 / 3 * Math.cos(this.angle) + Math.sin(this.angle) / 2),
@@ -41,19 +43,19 @@ class Ship {
 
     boostShip(exploding, blinkOn) {
         if (this.boosting) {
-            this.momentum.x += SHIP_MOMENTUM * Math.cos(this.angle) / FPS;
-            this.momentum.y -= SHIP_MOMENTUM * Math.sin(this.angle) / FPS;
+            this.momentum.x += this.acceleration * Math.cos(this.angle) / FPS;
+            this.momentum.y -= this.acceleration * Math.sin(this.angle) / FPS;
             if (!exploding && blinkOn) {
                 this.drawBooster();
             }
         } else {
-            this.momentum.x -= FRICTION * this.momentum.x / FPS;
-            this.momentum.y -= FRICTION * this.momentum.y / FPS;
+            this.momentum.x -= this.spaceFriction * this.momentum.x / FPS;
+            this.momentum.y -= this.spaceFriction * this.momentum.y / FPS;
         }
     }
 
 
-    reappearWhenOutOfCanvas() {
+    reappearWhenOutOfCanvas(canv) {
         if (this.x < 0 - this.radius) {
             this.x = canv.width + this.radius;
         } else if (this.x > canv.width + this.radius) {
@@ -67,7 +69,7 @@ class Ship {
     }
 
 
-    drawShip() {
+    drawShip(context) {
         context.strokeStyle = "white";
         context.lineWidth = this.radius / 10;
         context.beginPath();
@@ -96,5 +98,40 @@ class Ship {
     moveShip() {
         this.x += this.momentum.x;
         this.y += this.momentum.y;
+    }
+
+    explodeShip() {
+        this.explodeTime = Math.ceil(SHIP_EXPLODE_DUR * FPS);
+    }
+
+    drawExplosion(context) {
+        context.fillStyle = "darkred";
+        context.beginPath();
+        context.arc(this.x, this.y, this.radius * 1.7, 0, Math.PI * 3, false);
+        context.fill();
+        context.fillStyle = "red";
+        context.beginPath();
+        context.arc(this.x, this.y, this.radius * 1.4, 0, Math.PI * 3, false);
+        context.fill();
+        context.fillStyle = "orange";
+        context.beginPath();
+        context.arc(this.x, this.y, this.radius * 1.1, 0, Math.PI * 3, false);
+        context.fill();
+        context.fillStyle = "yellow";
+        context.beginPath();
+        context.arc(this.x, this.y, this.radius * 0.8, 0, Math.PI * 3, false);
+        context.fill();
+        context.fillStyle = "white";
+        context.beginPath();
+        context.arc(this.x, this.y, this.radius * 0.5, 0, Math.PI * 3, false);
+        context.fill();
+    }
+
+    checkCollisions(Asteroids) {
+        for (var i = 0; i < Asteroids.length; i++) {
+            if (distanceBetweenPoints(this.x, this.y, Asteroids[i].x, Asteroids[i].y) < this.radius + Asteroids[i].radius) {
+                this.explodeShip();
+            }
+        }
     }
 }
