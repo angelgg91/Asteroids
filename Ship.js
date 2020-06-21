@@ -15,6 +15,8 @@ class Ship {
         this.blinkTime = Math.ceil(blink_duration * FPS);
         this.explodeTime = 0;
         this.spaceFriction = friction;
+        this.canShoot = true;
+        this.lasers = [];
     }
 
 
