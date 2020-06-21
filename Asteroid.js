@@ -2,8 +2,8 @@ class Asteroid {
     constructor(coordX, coordY, size, speed, nvertices, jag) {
         this.x = coordX;
         this.y = coordY;
-        this.xVelocity = Math.random() * speed / FPS * (Math.random() < 0.5 ? 1: -1);
-        this.yVelocity = Math.random() * speed / FPS * (Math.random() < 0.5 ? 1: -1);
+        this.xVelocity = Math.random() * speed / FPS * (Math.random() < 0.5 ? 1 : -1);
+        this.yVelocity = Math.random() * speed / FPS * (Math.random() < 0.5 ? 1 : -1);
         this.radius = size / 2;
         this.angle = Math.random() * Math.PI * 2; // in radians
         this.vertices = Math.floor(nvertices - Math.random() * 10 + 5);
@@ -33,6 +33,7 @@ class Asteroid {
         }
         context.closePath();
         context.stroke();
+
     }
 
 
@@ -41,17 +42,20 @@ class Asteroid {
         this.y += this.yVelocity;
     }
 
-    
+
     reappearWhenOutOfCanvas() {
         if (this.x < 0 - this.radius) {
             this.x = canv.width + this.radius;
-        } else if (this.x > canv.width + this.radius){
+        } else if (this.x > canv.width + this.radius) {
             this.x = 0 - this.radius;
         }
         if (this.y < 0 - this.radius) {
             this.y = canv.height + this.radius;
-        } else if (this.y > canv.height + this.radius){
+        } else if (this.y > canv.height + this.radius) {
             this.y = 0 - this.radius;
         }
     }
 }
+
+
+
