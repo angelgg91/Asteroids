@@ -17,7 +17,7 @@ class Asteroid {
 
     drawAsteroid(context) {
         context.strokeStyle = "grey";
-        context.lineWidth = this.radius / 30;
+        context.lineWidth = this.radius / 15;
         // draw path
         context.beginPath();
         context.moveTo(
@@ -54,6 +54,18 @@ class Asteroid {
         } else if (this.y > canv.height + this.radius) {
             this.y = 0 - this.radius;
         }
+    }
+
+    destroyAsteroid(Asteroids, index) {
+        if (this.radius == Math.ceil(ASTEROID_SIZE / 2)) { // large asteroid
+            Asteroids.push(new Asteroid(this.x, this.y, Math.ceil(ASTEROID_SIZE / 2), ASTEROID_SPEED, ASTEROID_VERTICES, ASTEROIDS_JAG, FPS));
+            Asteroids.push(new Asteroid(this.x, this.y, Math.ceil(ASTEROID_SIZE / 2), ASTEROID_SPEED, ASTEROID_VERTICES, ASTEROIDS_JAG, FPS));
+        } else if (this.radius == Math.ceil(ASTEROID_SIZE / 4)) { // medium asteroid
+            Asteroids.push(new Asteroid(this.x, this.y, Math.ceil(ASTEROID_SIZE / 4), ASTEROID_SPEED, ASTEROID_VERTICES, ASTEROIDS_JAG, FPS));
+            Asteroids.push(new Asteroid(this.x, this.y, Math.ceil(ASTEROID_SIZE / 4), ASTEROID_SPEED, ASTEROID_VERTICES, ASTEROIDS_JAG, FPS));
+        }
+
+        Asteroids.splice(index, 1);
     }
 }
 

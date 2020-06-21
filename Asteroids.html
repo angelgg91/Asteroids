@@ -31,7 +31,7 @@
         const LASER_MAX = 10; // Maximum number of lasers at screen
         const LASER_SPEED = 300; // Speed of laser in pixels per second
         const LASER_DISTANCE = 0.6; // Distance a laser can travel, depending on the size of the screen 
-
+        const LASER_EXPLODE_DUR = 0.1; // duration of the laser's explosion in seconds
 
         /** @type {HTMLCanvasElement} */
         var canv = document.getElementById("gameCanvas");
@@ -115,14 +115,6 @@
             context.fillStyle = "black";
             context.fillRect(0, 0, canv.width, canv.height);
 
-            // draw the lasers
-            for (var i = 0; i < ship.lasers.length; i++) {
-                context.fillStyle = "orange";
-                context.beginPath();
-                context.arc(ship.lasers[i].x, ship.lasers[i].y, SHIP_SIZE / 15, 0, Math.PI * 2, false);
-                context.fill();
-            }
-
 
             // ship algorithm
             if (!exploding) {
@@ -162,7 +154,7 @@
                 context.lineWidth = this.radius / 30;
                 Asteroids[i].drawAsteroid(context);
 
-                // show ship's collision circle
+                // show asterois collision circle
                 if (SHOW_BOUNDING) {
                     context.strokeStyle = "lime";
                     context.beginPath();
@@ -175,18 +167,35 @@
 
             // lasers algorithm
             for (var i = ship.lasers.length - 1; i >= 0 ; i--) {
+                ship.lasers[i].drawLaser(context);
+
                 // check if the distance travelled is higher than the percentage chosen of the width of the space
                 if (ship.lasers[i].distanceTravelled > LASER_DISTANCE * canv.width) {
                     ship.lasers.splice(i, 1);
+                    continue;
                 }
-                // calculate the distance travelled by a laser
-                ship.lasers[i].calculateDistanceTravelled();
-
-                // move the laser
-                ship.lasers[i].x += ship.lasers[i].xVel;
-                ship.lasers[i].y += ship.lasers[i].yVel;
-                
+            
+                // handle explosion
+                if (ship.lasers[i].explodeDuration > 0) {
+                    ship.lasers[i].explodeDuration--;
+                    if (ship.lasers[i].explodeDuration == 0) {
+                        ship.lasers.splice(i, 1);
+                        continue;
+                    }
+                } else {
+                    ship.lasers[i].moveLaser();
+                    ship.lasers[i].calculateDistanceTravelled();
+                }
                 ship.lasers[i].reappearWhenOutOfCanvas(canv);
+
+                // check collisions against asteroids
+                for (var j = Asteroids.length - 1; j >= 0 ; j--) {
+                        if (ship.lasers[i].explodeDuration == 0 && distanceBetweenPoints(ship.lasers[i].x, ship.lasers[i].y, Asteroids[j].x, Asteroids[j].y) < Asteroids[j].radius) {
+                            Asteroids[j].destroyAsteroid(Asteroids, j);
+                            ship.lasers[i].explodeDuration = Math.ceil(LASER_EXPLODE_DUR * FPS);
+                            break;
+                        }
+                }
             }
 
 

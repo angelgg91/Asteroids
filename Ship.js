@@ -133,6 +133,8 @@ class Ship {
         for (var i = 0; i < Asteroids.length; i++) {
             if (distanceBetweenPoints(this.x, this.y, Asteroids[i].x, Asteroids[i].y) < this.radius + Asteroids[i].radius) {
                 this.explodeShip();
+                // kamikaze
+                Asteroids[i].destroyAsteroid(Asteroids, i);
             }
         }
     }
