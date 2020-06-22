@@ -65,6 +65,11 @@ class Asteroid {
             Asteroids.push(new Asteroid(this.x, this.y, Math.ceil(ASTEROID_SIZE / 4), ASTEROID_SPEED, ASTEROID_VERTICES, ASTEROIDS_JAG, FPS, this.levelMultiplier));
             Asteroids.push(new Asteroid(this.x, this.y, Math.ceil(ASTEROID_SIZE / 4), ASTEROID_SPEED, ASTEROID_VERTICES, ASTEROIDS_JAG, FPS, this.levelMultiplier));
         }
+        score += ASTEROID_POINTS;
+        if (score > scoreHigh) {
+            scoreHigh = score;
+            localStorage.setItem(SAVE_KEY_SCORE, score);
+        }
         // remove asteroid from the array
         Asteroids.splice(index, 1);
         if (Asteroids.length == 0) {
