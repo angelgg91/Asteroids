@@ -17,6 +17,7 @@ class Ship {
         this.spaceFriction = friction;
         this.canShoot = true;
         this.lasers = [];
+        this.dead = false;
     }
 
 
@@ -44,7 +45,7 @@ class Ship {
 
 
     boostShip(exploding, blinkOn) {
-        if (this.boosting) {
+        if (this.boosting && !this.dead) {
             this.momentum.x += this.acceleration * Math.cos(this.angle) / FPS;
             this.momentum.y -= this.acceleration * Math.sin(this.angle) / FPS;
             if (!exploding && blinkOn) {

@@ -34,6 +34,7 @@
         const LASER_EXPLODE_DUR = 0.1; // duration of the laser's explosion in seconds
         const TEXT_SIZE = 40; // text font size
         const TEXT_FADE_TIME = 2.5 // seconds to text fading
+        const GAME_LIVES = 3;
 
         var canv = document.getElementById("gameCanvas");
         var context = canv.getContext("2d");
@@ -45,34 +46,38 @@
 
 
         function keyDown(/** @type {KeyboadEvent} */ ev) {
-            switch (ev.keyCode) {
-                case 32: // space bar
-                    shootLaser();
-                    break;
-                case 37: // Left arrow
-                    ship.rotation = TURN_SPEED / 180 * Math.PI / FPS;
-                    break;
-                case 38: // Up arrow
-                    ship.boosting = true;
-                    break;
-                case 39: // Right arrow
-                    ship.rotation = -TURN_SPEED / 180 * Math.PI / FPS;
-                    break;
+            if (!ship.dead) {
+                switch (ev.keyCode) {
+                    case 32: // space bar
+                        shootLaser();
+                        break;
+                    case 37: // Left arrow
+                        ship.rotation = TURN_SPEED / 180 * Math.PI / FPS;
+                        break;
+                    case 38: // Up arrow
+                        ship.boosting = true;
+                        break;
+                    case 39: // Right arrow
+                        ship.rotation = -TURN_SPEED / 180 * Math.PI / FPS;
+                        break;
+                }
             }
         }
 
 
         function keyUp(/** @type {KeyboadEvent} */ ev) {
-            switch (ev.keyCode) {
-                case 37: // Left arrow
-                    ship.rotation = 0;
-                    break;
-                case 38: // Up arrow
-                    ship.boosting = false;
-                    break;
-                case 39: // Right arrow
-                    ship.rotation = 0;
-                    break;
+            if (!ship.dead) {
+                switch (ev.keyCode) {
+                    case 37: // Left arrow
+                        ship.rotation = 0;
+                        break;
+                    case 38: // Up arrow
+                        ship.boosting = false;
+                        break;
+                    case 39: // Right arrow
+                        ship.rotation = 0;
+                        break;
+                }
             }
         }
 
@@ -109,6 +114,7 @@
         function newGame () {
             ship = new Ship(canv.width / 2, canv.height / 2, SHIP_SIZE, SHIP_MOMENTUM, SHIP_INVISIBILITY_DUR, SHIP_BLINK_DUR, FPS, FRICTION);
             level = 0;
+            lives = GAME_LIVES;
             newLevel();
         }
 
@@ -130,9 +136,17 @@
                 context.font = "small-caps " + TEXT_SIZE + "px arial";
                 context.fillText(text, canv.width / 2, canv.height * 0.75);
                 textAlpha -= (1.0 / TEXT_FADE_TIME / FPS);
+            } else if(ship.dead) {
+                newGame();
             }
         }
 
+
+        function gameOver(){
+            text = "Game over";
+            textAlpha = 1.0;
+            ship.dead = true;
+        }
 
         // set up game loop
         setInterval(update, 1000 / FPS);
@@ -150,10 +164,11 @@
 
             // ship algorithm
             if (!exploding) {
-                if (blinkOn) {
+                if (blinkOn && !ship.dead) {
                     ship.drawShip(context);
                 }
-                if (ship.blinkNum == 0) {
+                // Check when not blinking
+                if (ship.blinkNum == 0 && !ship.dead) {
                 ship.checkCollisions(Asteroids);
                 }
                 ship.rotateShip();
@@ -175,7 +190,13 @@
                 ship.drawExplosion(context);
                 ship.explodeTime--;
                 if (ship.explodeTime == 0) {
-                    ship = new Ship(canv.width / 2, canv.height / 2, SHIP_SIZE, SHIP_MOMENTUM, SHIP_INVISIBILITY_DUR, SHIP_BLINK_DUR, FPS, FRICTION);
+                    lives--;
+                    if (lives == 0) {
+                        gameOver();
+                    }
+                    if(!ship.dead) {
+                        ship = new Ship(canv.width / 2, canv.height / 2, SHIP_SIZE, SHIP_MOMENTUM, SHIP_INVISIBILITY_DUR, SHIP_BLINK_DUR, FPS, FRICTION);
+                    }
                 }
             }
 
@@ -239,6 +260,10 @@
 
             drawGameText();
 
+            for (var i = 0; i < lives; i++) {
+                var shiplife = new Ship(SHIP_SIZE + i * SHIP_SIZE * 1.2, SHIP_SIZE, SHIP_SIZE, SHIP_MOMENTUM, SHIP_INVISIBILITY_DUR, SHIP_BLINK_DUR, FPS, FRICTION);
+                shiplife.drawShip(context);
+            }
 
             // centre dot 
             if (SHOW_CENTRE_DOT) {
