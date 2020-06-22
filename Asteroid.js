@@ -1,9 +1,9 @@
 class Asteroid {
-    constructor(coordX, coordY, size, speed, nvertices, jag, FPS) {
+    constructor(coordX, coordY, size, speed, nvertices, jag, FPS, levelMultiplier) {
         this.x = coordX;
         this.y = coordY;
-        this.xVelocity = Math.random() * speed / FPS * (Math.random() < 0.5 ? 1 : -1);
-        this.yVelocity = Math.random() * speed / FPS * (Math.random() < 0.5 ? 1 : -1);
+        this.xVelocity = Math.random() * speed * levelMultiplier / FPS * (Math.random() < 0.5 ? 1 : -1);
+        this.yVelocity = Math.random() * speed * levelMultiplier / FPS * (Math.random() < 0.5 ? 1 : -1);
         this.radius = size / 2;
         this.angle = Math.random() * Math.PI * 2; // in radians
         this.vertices = Math.floor(nvertices - Math.random() * 10 + 5);
@@ -12,6 +12,7 @@ class Asteroid {
         for (var i = 0; i < this.vertices; i++) {
             this.offset.push(Math.random() * this.jaggedness * 2 + 1 - this.jaggedness);
         }
+        this.levelMultiplier = levelMultiplier;
     }
 
 
@@ -58,14 +59,18 @@ class Asteroid {
 
     destroyAsteroid(Asteroids, index) {
         if (this.radius == Math.ceil(ASTEROID_SIZE / 2)) { // large asteroid
-            Asteroids.push(new Asteroid(this.x, this.y, Math.ceil(ASTEROID_SIZE / 2), ASTEROID_SPEED, ASTEROID_VERTICES, ASTEROIDS_JAG, FPS));
-            Asteroids.push(new Asteroid(this.x, this.y, Math.ceil(ASTEROID_SIZE / 2), ASTEROID_SPEED, ASTEROID_VERTICES, ASTEROIDS_JAG, FPS));
+            Asteroids.push(new Asteroid(this.x, this.y, Math.ceil(ASTEROID_SIZE / 2), ASTEROID_SPEED, ASTEROID_VERTICES, ASTEROIDS_JAG, FPS, this.levelMultiplier));
+            Asteroids.push(new Asteroid(this.x, this.y, Math.ceil(ASTEROID_SIZE / 2), ASTEROID_SPEED, ASTEROID_VERTICES, ASTEROIDS_JAG, FPS, this.levelMultiplier));
         } else if (this.radius == Math.ceil(ASTEROID_SIZE / 4)) { // medium asteroid
-            Asteroids.push(new Asteroid(this.x, this.y, Math.ceil(ASTEROID_SIZE / 4), ASTEROID_SPEED, ASTEROID_VERTICES, ASTEROIDS_JAG, FPS));
-            Asteroids.push(new Asteroid(this.x, this.y, Math.ceil(ASTEROID_SIZE / 4), ASTEROID_SPEED, ASTEROID_VERTICES, ASTEROIDS_JAG, FPS));
+            Asteroids.push(new Asteroid(this.x, this.y, Math.ceil(ASTEROID_SIZE / 4), ASTEROID_SPEED, ASTEROID_VERTICES, ASTEROIDS_JAG, FPS, this.levelMultiplier));
+            Asteroids.push(new Asteroid(this.x, this.y, Math.ceil(ASTEROID_SIZE / 4), ASTEROID_SPEED, ASTEROID_VERTICES, ASTEROIDS_JAG, FPS, this.levelMultiplier));
         }
-
+        // remove asteroid from the array
         Asteroids.splice(index, 1);
+        if (Asteroids.length == 0) {
+            level++;
+            newLevel();
+        }
     }
 }
 

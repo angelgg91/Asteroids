@@ -19,7 +19,7 @@
         const TURN_SPEED = 360; // Turn speed in degrees per second
         const SHIP_MOMENTUM = 5; // acceletarion of the ship in pixels per second
         const ASTEROID_SIZE = 100;
-        const ASTEROIDS_NUMBER = 10;
+        const ASTEROIDS_NUMBER = 1;
         const ASTEROIDS_JAG = 0.4; // jaggedness of the asteroid
         const ASTEROID_SPEED = 50; // max speed for asteroids
         const ASTEROID_VERTICES = 10; // max number of vertices for an asteroid
@@ -32,18 +32,17 @@
         const LASER_SPEED = 300; // Speed of laser in pixels per second
         const LASER_DISTANCE = 0.6; // Distance a laser can travel, depending on the size of the screen 
         const LASER_EXPLODE_DUR = 0.1; // duration of the laser's explosion in seconds
+        const TEXT_SIZE = 40; // text font size
+        const TEXT_FADE_TIME = 2.5 // seconds to text fading
 
-        /** @type {HTMLCanvasElement} */
         var canv = document.getElementById("gameCanvas");
         var context = canv.getContext("2d");
-
-
-        ship = new Ship(canv.width / 2, canv.height / 2, SHIP_SIZE, SHIP_MOMENTUM, SHIP_INVISIBILITY_DUR, SHIP_BLINK_DUR, FPS, FRICTION);
-        //ship = newShip();
-
+        var level, lives, text, textAlpha;
+        var Asteroids = [];
         // set up event handlers
         document.addEventListener("keydown", keyDown);
         document.addEventListener("keyup", keyUp);
+
 
         function keyDown(/** @type {KeyboadEvent} */ ev) {
             switch (ev.keyCode) {
@@ -62,6 +61,7 @@
             }
         }
 
+
         function keyUp(/** @type {KeyboadEvent} */ ev) {
             switch (ev.keyCode) {
                 case 37: // Left arrow
@@ -75,6 +75,10 @@
                     break;
             }
         }
+
+
+        // FUNCTIONS
+
         function shootLaser() {
             // create laser object
             if (ship.canShoot && ship.lasers.length < LASER_MAX) {
@@ -82,18 +86,16 @@
             }
         }
 
-        var Asteroids = [];
-        createAsteroidBelt();
-        function createAsteroidBelt() {
-            Asteroids = []
+
+        function createAsteroidBelt(Asteroids) {
             var x, y;
-            for (var i = 0; i < ASTEROIDS_NUMBER; i++) {
+            for (var i = 0; i < ASTEROIDS_NUMBER + level; i++) {
                 do {
                     x = Math.floor(Math.random() * canv.width);
                     y = Math.floor(Math.random() * canv.height);
                 } while (distanceBetweenPoints(ship.x, ship.y, x, y) < ASTEROID_SIZE * 2 + ship.radius);
-
-                Asteroids.push(new Asteroid(x, y, ASTEROID_SIZE, ASTEROID_SPEED, ASTEROID_VERTICES, ASTEROIDS_JAG, FPS))
+                var levelMultiplier = 1 + 0.1 * level;
+                Asteroids.push(new Asteroid(x, y, ASTEROID_SIZE, ASTEROID_SPEED, ASTEROID_VERTICES, ASTEROIDS_JAG, FPS, levelMultiplier))
             }
         }
 
@@ -102,10 +104,40 @@
         }
 
 
+
+        // set up objects for the game
+        function newGame () {
+            ship = new Ship(canv.width / 2, canv.height / 2, SHIP_SIZE, SHIP_MOMENTUM, SHIP_INVISIBILITY_DUR, SHIP_BLINK_DUR, FPS, FRICTION);
+            level = 0;
+            newLevel();
+        }
+
+        
+        // Increase level and create new asteroid belt
+        function newLevel() {
+            text = "Level " + (level + 1);
+            textAlpha = 1.0;
+            createAsteroidBelt(Asteroids);
+        }
+
+
+        // write the text showing the current level
+        function drawGameText() {
+            if (textAlpha >= 0) {
+                context.textAlign = "center";
+                context.textBaseline = "middle";
+                context.fillStyle = "rgba(255, 255, 255, " + textAlpha + ")";
+                context.font = "small-caps " + TEXT_SIZE + "px arial";
+                context.fillText(text, canv.width / 2, canv.height * 0.75);
+                textAlpha -= (1.0 / TEXT_FADE_TIME / FPS);
+            }
+        }
+
+
         // set up game loop
         setInterval(update, 1000 / FPS);
 
-
+        newGame();
         function update() {
             var exploding = ship.explodeTime > 0;
             var blinkOn = ship.blinkNum % 2 == 0;
@@ -197,6 +229,15 @@
                         }
                 }
             }
+
+            // When there are no more asteroids, level goes up
+            if (Asteroids.length == 0) {
+                level++;
+                newLevel();
+            }
+
+
+            drawGameText();
 
 
             // centre dot 
