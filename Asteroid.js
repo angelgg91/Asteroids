@@ -72,6 +72,7 @@ class Asteroid {
         }
         // remove asteroid from the array
         Asteroids.splice(index, 1);
+        fxHit.run();
         if (Asteroids.length == 0) {
             level++;
             newLevel();

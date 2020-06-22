@@ -51,9 +51,11 @@ class Ship {
             if (!exploding && blinkOn) {
                 this.drawBooster();
             }
+            fxThrust.run();
         } else {
             this.momentum.x -= this.spaceFriction * this.momentum.x / FPS;
             this.momentum.y -= this.spaceFriction * this.momentum.y / FPS;
+            fxThrust.stop();
         }
     }
 
@@ -105,6 +107,7 @@ class Ship {
 
     explodeShip() {
         this.explodeTime = Math.ceil(SHIP_EXPLODE_DUR * FPS);
+        fxExplode.run();
     }
 
     drawExplosion(context) {

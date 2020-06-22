@@ -12,6 +12,7 @@
     <script src="Ship.js"> </script>
     <script src="Asteroid.js"> </script>
     <script src="Laser.js"> </script>
+    <script src="Sound.js"> </script>
     <script>
         const FPS = 75;
         const FRICTION = 0.7; // friction coefficient in space
@@ -22,7 +23,7 @@
         const SHIP_INVISIBILITY_DUR = 3; // duration of the ship's invisibility in seconds
         const SHIP_BLINK_DUR = 0.1; // duration in seconds of a single blink during ship's invisibility
         const ASTEROID_SIZE = 100;
-        const ASTEROIDS_NUMBER = 1;
+        const ASTEROIDS_NUMBER = 3;
         const ASTEROIDS_JAG = 0.4; // jaggedness of the asteroid
         const ASTEROID_SPEED = 50; // max speed for asteroids
         const ASTEROID_VERTICES = 10; // max number of vertices for an asteroid
@@ -39,8 +40,18 @@
         const SAVE_KEY_SCORE = "highscore"; // save key for local storage of high score
         
 
+        // Setting up Canvas
         var canv = document.getElementById("gameCanvas");
         var context = canv.getContext("2d");
+
+        // Setting up sound effects
+        var fxLaser = new Sound("sounds/laser.m4a", 5, 0.2);
+        var fxExplode = new Sound("sounds/explode.m4a");
+        var fxHit = new Sound("sounds/hit.m4a", 5);
+        var fxThrust = new Sound("sounds/thrust.m4a");
+
+
+        // Setting up general variables
         var level, lives, text, textAlpha, score, scoreHigh;
         var Asteroids = [];
         // set up event handlers
@@ -92,6 +103,7 @@
             if (ship.canShoot && ship.lasers.length < LASER_MAX) {
                 ship.lasers.push(new Laser(ship, LASER_SPEED, LASER_DISTANCE));
             }
+            fxLaser.run();
         }
 
 
@@ -134,6 +146,7 @@
         function newLevel() {
             text = "Level " + (level + 1);
             textAlpha = 1.0;
+            Asteroids = []
             createAsteroidBelt(Asteroids);
         }
 
@@ -201,8 +214,8 @@
                 ship.checkCollisions(Asteroids);
                 }
                 ship.rotateShip();
-                ship.moveShip();
                 ship.boostShip(exploding, blinkOn);
+                ship.moveShip();
                 ship.reappearWhenOutOfCanvas(canv);
                 //handle blinking
                 if (ship.blinkNum > 0) {
@@ -287,7 +300,7 @@
                 newLevel();
             }
 
-
+            // Draw user interface
             drawGameText();
             drawScore();
             drawScoreHigh();
