@@ -12,8 +12,9 @@
 
 ## UML
 <p>
-	<img alt="UML" title="UML" src="../imagesReadme/UML.png" width="500" height="500" >
+	<img alt="uml" title="uml" src="../imagesReadme/uml.png" width="500" height="500" >
 </p>
+
 
 
 ## Diseño
@@ -31,7 +32,8 @@ Mostramos gráficamente los objetos de cada clase.
 ### Objetos Sound
 Pantalla inicial al iniciar el juego, empezamos en el nivel 1, a medida que destruyamos los asteroides el nivel se va incrementando
 <p>
-	<img alt="documentationCanvasSound" title="documentationCanvasSound" src="../imagesReadme/documentationCanvasSound.png" width="500" height="500" >
+	<img alt="documentationCanvasSound" title="documentationCanvasSound" src="../imagesReadme/documentationCanvasSound.png" width="800" height=600" >
 </p>
+
 
 
