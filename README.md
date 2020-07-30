@@ -1,14 +1,17 @@
 # **Asteroids**
 ## Table of contents
 
-1. [Source code](#Source-code)
-2. [Documentation](#Documentation)
-   1. [English](#Spanish)
-   2. [Spanish](#Spanish)
+* [Source code](#Source-code)
+* [Documentation](#Documentation)
+   - [English](#Spanish)
+   - [Spanish](#Spanish)
+* [Contributors](#Contributors)
+* [License](#License)
 
 
 ## Source code
 [Source](src)
+
 
 ## Documentation
 
@@ -16,8 +19,8 @@
 
 
 ### Spanish
-1. [Manual de usuario](documentation/spanish/Manual%20de%20usuario.md)
-2. [Documentación](documentation/spanish/Documentacion.md)
+* [Manual de usuario](documentation/spanish/Manual%20de%20usuario.md)
+* [Documentación](documentation/spanish/Documentacion.md)
 
 
 ## Contributors ✍️
