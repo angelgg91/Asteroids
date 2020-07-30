@@ -1,4 +1,7 @@
 # **Asteroids**
+
+Asteroids arcade web game
+
 ## Table of contents
 
 * [Source code](#Source-code)
