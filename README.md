@@ -13,8 +13,8 @@
 ## Documentation
 
 ### English
-1. [Manual de usuario](documentation/spanish/Manual%20de%20usuario)
-2. [Documentación](documentation/spanish/Documentacion)
+1. [Manual de usuario](documentation/spanish/Manual%20de%20usuario.md)
+2. [Documentación](documentation/spanish/Documentacion.md)
 
 ### Spanish
 
